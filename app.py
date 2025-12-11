@@ -1,11 +1,15 @@
 import os
 import uuid
 import shutil
+import socket
 import yt_dlp
 from glob import glob
 from flask import (
     Flask, request, send_file, flash, redirect, url_for, render_template
 )
+
+# Increase socket timeout globally for downloads
+socket.setdefaulttimeout(300)
 
 app = Flask(__name__)
 app.secret_key = "secret_key_here"   # change for production
@@ -81,6 +85,12 @@ def download():
                 "noplaylist": True,
                 # make yt-dlp quiet so Flask logs remain readable
                 "quiet": False,
+                # Timeout settings for slow networks (Render, etc.)
+                "socket_timeout": 300,
+                "http_chunk_size": 10485760,  # 10MB chunks
+                "retries": {"main": 10, "fragment": 10, "file_access": 10},
+                "fragment_retries": 10,
+                "skip_unavailable_fragments": True,
             }
 
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -105,6 +115,12 @@ def download():
                 "merge_output_format": "mp4",
                 "noplaylist": True,
                 "quiet": False,
+                # Timeout settings for slow networks (Render, etc.)
+                "socket_timeout": 300,
+                "http_chunk_size": 10485760,  # 10MB chunks
+                "retries": {"main": 10, "fragment": 10, "file_access": 10},
+                "fragment_retries": 10,
+                "skip_unavailable_fragments": True,
             }
 
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -130,6 +146,12 @@ def download():
                 "merge_output_format": "mp4",
                 "ignoreerrors": True,
                 "quiet": False,
+                # Timeout settings for slow networks (Render, etc.)
+                "socket_timeout": 300,
+                "http_chunk_size": 10485760,  # 10MB chunks
+                "retries": {"main": 10, "fragment": 10, "file_access": 10},
+                "fragment_retries": 10,
+                "skip_unavailable_fragments": True,
             }
 
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
